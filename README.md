@@ -22,16 +22,6 @@ A simple and interactive shooting practice application/game designed to improve 
 
 ---
 
-## 📂 Project Structure
-Shooting_Practice_/
-│── src/ # Source code
-│── assets/ # Images / sounds (if any)
-│── main.* # Entry point
-│── README.md
-
-
----
-
 ## ⚙️ Installation & Setup
 
 1. Clone the repository:
