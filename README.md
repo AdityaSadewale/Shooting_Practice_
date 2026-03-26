@@ -62,8 +62,6 @@ Push and create a Pull Request
 This project is licensed under the MIT License.
 
 👨‍💻 Author
-
 Aditya Sadewale
-
 GitHub: https://github.com/AdityaSadewale
 
