@@ -39,6 +39,7 @@ Run the project:
 npm start
 # or
 python main.py
+
 🎮 How to Play
 Start the game/application
 Aim at the targets using mouse/controls
@@ -56,8 +57,8 @@ Fork the repo
 Create a new branch (feature-xyz)
 Commit your changes
 Push and create a Pull Request
-📜 License
 
+📜 License
 This project is licensed under the MIT License.
 
 👨‍💻 Author
