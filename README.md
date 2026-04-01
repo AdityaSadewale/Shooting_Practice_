@@ -40,13 +40,14 @@ npm start
 # or
 python main.py
 
+
 🎮 How to Play
 Start the game/application
 Aim at the targets using mouse/controls
 Click/shoot to hit targets
 Score points based on accuracy and speed
-📸 Screenshots
 
+📸 Screenshots
 Add screenshots of your project here
 
 🤝 Contributing
