@@ -4,7 +4,6 @@ import { getUser } from './lib/store';
 import Onboarding from './pages/Onboarding';
 import Dashboard from './pages/Dashboard';
 
-
 function App() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
