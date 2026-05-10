@@ -30,7 +30,7 @@ git clone https://github.com/AdityaSadewale/Shooting_Practice_.git
 Navigate to the project folder:
 cd Shooting_Practice_
 Install dependencies (if applicable):
-# Example
+
 npm install
 # or
 pip install -r requirements.txt
