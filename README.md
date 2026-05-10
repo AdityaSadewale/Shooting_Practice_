@@ -32,12 +32,12 @@ cd Shooting_Practice_
 Install dependencies (if applicable):
 
 npm install
-# or
+
 pip install -r requirements.txt
 Run the project:
 
 npm start
-# or
+
 python main.py
 
 
