@@ -35,7 +35,7 @@ npm install
 # or
 pip install -r requirements.txt
 Run the project:
-# Example
+
 npm start
 # or
 python main.py
