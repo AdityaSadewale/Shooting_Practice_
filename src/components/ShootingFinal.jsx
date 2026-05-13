@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Play, Square, Mic, Crosshair, Award } from 'lucide-react';
 import { motion } from 'framer-motion';
 
+
 export default function ShootingFinal({ userName = "Shooter" }) {
   const [shots, setShots] = useState([]);
   const [currentScore, setCurrentScore] = useState('');
