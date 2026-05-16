@@ -50,6 +50,7 @@ export default function Analytics() {
 
   return (
     <div className="space-y-6">
+
       
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="bg-card border border-border p-6 rounded-xl flex items-center gap-4">
