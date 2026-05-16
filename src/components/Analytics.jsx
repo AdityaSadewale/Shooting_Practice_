@@ -24,7 +24,8 @@ export default function Analytics() {
     const avgScore = s.scores.length > 0 
       ? (s.scores.reduce((a, b) => a + b, 0) / s.scores.length).toFixed(1)
       : 0;
-      
+
+    
     // Inner ten approximation: assuming scores 10.3 and higher are inner tens.
     // We only have series scores (e.g., 102.4 for 10 shots), so we can approximate inner tens
     // based on the average shot value. Since real inner tens require per-shot data:
@@ -35,6 +36,7 @@ export default function Analytics() {
     else if (seriesAverage >= 10.0) innerTenPct = 40;
     else if (seriesAverage >= 9.5) innerTenPct = 10;
 
+    
     return {
       name: `Session ${idx + 1}`,
       date: new Date(s.date).toLocaleDateString(),
@@ -71,6 +73,7 @@ export default function Analytics() {
         </div>
       </div>
 
+      
       <div className="bg-card border border-border p-6 rounded-xl">
         <h3 className="text-lg font-bold mb-6">Average Series Score Trend</h3>
         <div className="h-64 w-full text-foreground text-sm">
@@ -94,6 +97,7 @@ export default function Analytics() {
           <BookOpen className="text-blue-500" size={20} />
           Recent Confidence Journal
         </h3>
+
         
         {sessions.slice().reverse().map((s, idx) => s.journal ? (
           <div key={idx} className="border-l-2 border-blue-500 pl-4 py-1">
@@ -101,6 +105,7 @@ export default function Analytics() {
             <p className="text-sm italic">"{s.journal}"</p>
           </div>
         ) : null)}
+
         
         {!sessions.some(s => s.journal) && (
           <p className="text-sm text-muted-foreground italic">No journal entries found.</p>
