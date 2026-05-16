@@ -6,6 +6,7 @@ import { Target, TrendingUp, BookOpen } from 'lucide-react';
 export default function Analytics() {
   const [sessions, setSessions] = useState([]);
 
+  
   useEffect(() => {
     setSessions(getSessions());
   }, []);
