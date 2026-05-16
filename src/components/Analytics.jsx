@@ -3,7 +3,6 @@ import { getSessions } from '../lib/store';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Target, TrendingUp, BookOpen } from 'lucide-react';
 
-
 export default function Analytics() {
   const [sessions, setSessions] = useState([]);
 
