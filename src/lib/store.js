@@ -78,3 +78,28 @@ export const getStreak = () => {
   
   return streak;
 };
+
+export const getDiaryEntries = () => {
+  const db = getDB();
+  return db.diaryEntries || [];
+};
+
+export const saveDiaryEntry = (entry) => {
+  const db = getDB();
+  if (!db.diaryEntries) db.diaryEntries = [];
+  
+  const existingIndex = db.diaryEntries.findIndex((e) => e.id === entry.id || e.date === entry.date);
+  if (existingIndex >= 0) {
+    db.diaryEntries[existingIndex] = { ...db.diaryEntries[existingIndex], ...entry };
+  } else {
+    db.diaryEntries.push(entry);
+  }
+  saveDB(db);
+};
+
+export const deleteDiaryEntry = (id) => {
+  const db = getDB();
+  if (!db.diaryEntries) return;
+  db.diaryEntries = db.diaryEntries.filter((e) => e.id !== id);
+  saveDB(db);
+};
