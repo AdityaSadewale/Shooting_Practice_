@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Play, Square, Pause, RotateCcw } from 'lucide-react';
 
+
 export default function PracticeTimer({ 
   title, 
   activeSeconds, 
