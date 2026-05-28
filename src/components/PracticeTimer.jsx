@@ -25,7 +25,6 @@ export default function PracticeTimer({
     }
   };
 
-  
   useEffect(() => {
     let interval = null;
     if (isActive && timeLeft > 0) {
