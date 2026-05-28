@@ -47,6 +47,7 @@ export default function MentalYoga() {
       night: "Visualize the gold medal around your neck. Practice your victory wave. Don't hit your lamp while doing it."
     }
   ];
+  
 
   return (
     <div className="space-y-8 pb-10">
