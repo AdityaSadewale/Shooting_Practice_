@@ -5,7 +5,6 @@ A simple and interactive shooting practice application/game designed to improve 
 
 ## 🚀 Features
 
-
 - 🎯 Target-based shooting system
 - ⏱️ Timer / score tracking
 - 🧠 Improves reaction time and accuracy
