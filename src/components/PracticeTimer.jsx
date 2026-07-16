@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { Play, Square, Pause, RotateCcw } from 'lucide-react';
 
 
@@ -26,29 +26,35 @@ export default function PracticeTimer({
   };
 
   useEffect(() => {
-    let interval = null;
-    if (isActive && timeLeft > 0) {
-      interval = setInterval(() => setTimeLeft(l => l - 1), 1000);
-    } else if (isActive && timeLeft === 0) {
-      if (phase === 'active') {
-        speak(stopVocab);
-        if (cycle >= totalCycles) {
-          setPhase('done');
-          setIsActive(false);
-          speak("Practice complete.");
-        } else {
-          setPhase('rest');
-          setTimeLeft(restSeconds);
+    if (!isActive) return;
+
+    const interval = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          if (phase === 'active') {
+            speak(stopVocab);
+            if (cycle >= totalCycles) {
+              setPhase('done');
+              setIsActive(false);
+              speak("Practice complete.");
+              return 0;
+            } else {
+              setPhase('rest');
+              return restSeconds;
+            }
+          } else if (phase === 'rest') {
+            speak(startVocab);
+            setPhase('active');
+            setCycle(c => c + 1);
+            return activeSeconds;
+          }
         }
-      } else if (phase === 'rest') {
-        speak(startVocab);
-        setPhase('active');
-        setTimeLeft(activeSeconds);
-        setCycle(c => c + 1);
-      }
-    }
+        return prev - 1;
+      });
+    }, 1000);
+
     return () => clearInterval(interval);
-  }, [isActive, timeLeft, phase, cycle, activeSeconds, restSeconds, totalCycles, startVocab, stopVocab]);
+  }, [isActive, phase, cycle, activeSeconds, restSeconds, totalCycles, startVocab, stopVocab]);
 
   const toggleTimer = () => {
     if (phase === 'done') return;

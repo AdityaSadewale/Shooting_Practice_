@@ -58,11 +58,8 @@ export default function ShootingFinal({ userName = "Shooter" }) {
   const timerRef = useRef(null);
   const sequenceTimeoutRef = useRef(null);
 
-  // Audio Context for BGM
-  const audioCtxRef = useRef(null);
-  const bgmGainRef = useRef(null);
+  // Audio Element for BGM
   const bgmAudioElementRef = useRef(null);
-  const bgmSourceNodeRef = useRef(null);
 
   // Initialize Voices
   useEffect(() => {
@@ -122,7 +119,7 @@ export default function ShootingFinal({ userName = "Shooter" }) {
     return stopBgm;
   }, [bgmEnabled, playBgm, stopBgm]);
 
-  const speak = (text) => {
+  const speak = useCallback((text) => {
     if ('speechSynthesis' in window) {
       window.speechSynthesis.cancel();
       const utterance = new SpeechSynthesisUtterance(text);
@@ -135,7 +132,7 @@ export default function ShootingFinal({ userName = "Shooter" }) {
       
       window.speechSynthesis.speak(utterance);
     }
-  };
+  }, [bgmEnabled]);
 
   const handleCommand = (cmd) => {
     switch (cmd) {
@@ -225,7 +222,7 @@ export default function ShootingFinal({ userName = "Shooter" }) {
         }
       }
     });
-  }, [players, roundNum, startOpponentShot, addLog, isPaused]);
+  }, [players, roundNum, startOpponentShot, addLog, isPaused, speak]);
 
   const nextShotSequence = () => {
     if (isPaused) {
@@ -309,6 +306,11 @@ export default function ShootingFinal({ userName = "Shooter" }) {
 
   // Timer logic for both loading and active phases
   useEffect(() => {
+    const handleTimeUp = () => {
+      speak("Stop.");
+      confirmScores();
+    };
+
     if (isMatchActive && !isPaused) {
       if (phase === 'loading') {
         timerRef.current = setInterval(() => {
@@ -337,16 +339,9 @@ export default function ShootingFinal({ userName = "Shooter" }) {
     }
 
     return () => clearInterval(timerRef.current);
-  }, [phase, isMatchActive, isPaused, currentScores, startActivePhase]); // currentScores needed for handleTimeUp scope
+  }, [phase, isMatchActive, isPaused, currentScores, startActivePhase, speak]); // currentScores needed for handleTimeUp scope
 
-  const handleTimeUp = () => {
-    speak("Stop.");
-    
-    // Automatically confirm scores after 50 seconds expire
-    confirmScores();
-  };
-
-  const confirmScores = () => {
+  function confirmScores() {
     clearInterval(timerRef.current);
     clearTimeout(sequenceTimeoutRef.current);
 
@@ -645,8 +640,6 @@ export default function ShootingFinal({ userName = "Shooter" }) {
       // Only modify the players who are tied in the last round!
       const isTied = tiedPlayers.some(tp => tp.id === p.id);
       if (isTied) {
-        const originalLastShot = parseFloat(p.shots[p.shots.length - 1]);
-        
         // Get the manually input reshot score from currentScores!
         let reshotVal = parseFloat(currentScores[p.id]);
         

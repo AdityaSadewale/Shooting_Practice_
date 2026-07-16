@@ -51,6 +51,11 @@ export default function GlobalAudioPlayer() {
   const [bgmEnabled, setBgmEnabled] = useState(false);
   const [volume, setVolume] = useState(0.25);
   const audioRef = useRef(null);
+  const volumeRef = useRef(volume);
+
+  useEffect(() => {
+    volumeRef.current = volume;
+  }, [volume]);
 
   // Create audio element once
   useEffect(() => {
@@ -90,7 +95,7 @@ export default function GlobalAudioPlayer() {
     let currentPath = '';
     try {
       currentPath = audio.src ? decodeURIComponent(new URL(audio.src).pathname) : '';
-    } catch (_) {
+    } catch {
       currentPath = '';
     }
 
@@ -102,7 +107,7 @@ export default function GlobalAudioPlayer() {
       audio.load();
     }
 
-    audio.volume = volume;
+    audio.volume = volumeRef.current;
 
     if (bgmEnabled) {
       const attemptPlay = () => {

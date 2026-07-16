@@ -13,15 +13,10 @@ import GlobalAudioPlayer from '../components/GlobalAudioPlayer';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const shooter1 = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQzhvtnHo_DV7-AmiVihIdJPbZ6ioLh2zUCxQ&s';
-const shooter2 = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTzAf4QXhkdkpsE5bxeTJVQOeekVuDm5JdwIw&s';
 
 export default function Dashboard({ user, onLogout }) {
   const [view, setView] = useState('timeline');
-  const [streak, setStreak] = useState(0);
-
-  useEffect(() => {
-    setStreak(getStreak());
-  }, []);
+  const [streak, setStreak] = useState(() => getStreak());
 
   const handleLogout = () => {
     clearUser();

@@ -159,7 +159,7 @@ export default function TargetAnalysis() {
            <div className="bg-background border border-border rounded-lg overflow-hidden">
              <div className="bg-muted px-4 py-2 text-xs font-bold uppercase tracking-wider border-b border-border">20-Shot Series Data</div>
              <div className="max-h-40 overflow-y-auto p-2 grid grid-cols-5 gap-2 text-center text-sm font-mono">
-                {shots.map((s, i) => (
+                {shots.map((s) => (
                   <div key={s.id} className={`py-1 rounded ${parseFloat(s.score) >= 10.3 ? 'bg-green-500/10 text-green-500 font-bold' : 'text-muted-foreground'}`}>
                     {s.score}
                   </div>

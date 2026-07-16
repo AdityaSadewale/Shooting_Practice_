@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { CheckCircle2, ChevronDown, ChevronUp, Play, Square, Save, Gift, Music, Pause, SkipBack, SkipForward, Volume2, VolumeX, PauseCircle, PlayCircle } from 'lucide-react';
 import { saveSession } from '../lib/store';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -19,6 +19,14 @@ const REWARD_TIPS = [
   "Reward Tip: A good follow-through means seeing the pellet strike through the sights."
 ];
 
+const getRandomConfidenceTip = () => {
+  return CONFIDENCE_TIPS[Math.floor(Math.random() * CONFIDENCE_TIPS.length)];
+};
+
+const getRandomRewardTip = () => {
+  return REWARD_TIPS[Math.floor(Math.random() * REWARD_TIPS.length)];
+};
+
 export default function Timeline({ user, onSessionSaved }) {
   const [expandedHour, setExpandedHour] = useState(1);
   const [completedHours, setCompletedHours] = useState([]);
@@ -31,7 +39,7 @@ export default function Timeline({ user, onSessionSaved }) {
   
   // Hour 4 state
   const [journal, setJournal] = useState('');
-  const [tip] = useState(CONFIDENCE_TIPS[Math.floor(Math.random() * CONFIDENCE_TIPS.length)]);
+  const [tip] = useState(getRandomConfidenceTip);
 
   // Reward state
   const [rewardTip, setRewardTip] = useState('');
@@ -99,7 +107,7 @@ export default function Timeline({ user, onSessionSaved }) {
     saveSession(session);
     
     // Generate reward tip
-    const randomReward = REWARD_TIPS[Math.floor(Math.random() * REWARD_TIPS.length)];
+    const randomReward = getRandomRewardTip();
     setRewardTip(randomReward);
 
     if (onSessionSaved) onSessionSaved();

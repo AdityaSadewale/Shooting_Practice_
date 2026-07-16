@@ -10,15 +10,13 @@ const MOTIVATIONS = [
   "Every champion was once a contender who refused to give up."
 ];
 
+const getRandomMotivation = () => MOTIVATIONS[Math.floor(Math.random() * MOTIVATIONS.length)];
+
 export default function Onboarding({ onComplete }) {
   const [name, setName] = useState('');
   const [weapon, setWeapon] = useState('');
   const [error, setError] = useState('');
-  const [quote, setQuote] = useState('');
-
-  useEffect(() => {
-    setQuote(MOTIVATIONS[Math.floor(Math.random() * MOTIVATIONS.length)]);
-  }, []);
+  const [quote, setQuote] = useState(getRandomMotivation);
 
   const handleSubmit = (e) => {
     e.preventDefault();

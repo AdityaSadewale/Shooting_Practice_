@@ -12,6 +12,8 @@ const MOODS = [
   { id: 'distracted', label: 'Unfocused', emoji: '🌀', color: 'from-amber-500 to-yellow-600', bg: 'bg-amber-500/10 border-amber-500/20 text-amber-500' }
 ];
 
+const generateEntryId = (existingId) => existingId || Date.now().toString();
+
 export default function Analytics() {
   const [sessions, setSessions] = useState([]);
   const [diaryEntries, setDiaryEntries] = useState([]);
@@ -33,17 +35,16 @@ export default function Analytics() {
   // Chart filter state (7d, 30d, 90d, 1y)
   const [chartFilter, setChartFilter] = useState('30d');
 
-  
-  useEffect(() => {
-    loadData();
-  }, []);
-
   const loadData = () => {
     setSessions(getSessions());
     const list = getDiaryEntries();
     list.sort((a, b) => new Date(b.date) - new Date(a.date));
     setDiaryEntries(list);
   };
+
+  useEffect(() => {
+    loadData();
+  }, []);
 
   const handleSaveDiary = (e) => {
     e.preventDefault();
@@ -53,7 +54,7 @@ export default function Analytics() {
     }
 
     const newEntry = {
-      id: entryId || Date.now().toString(),
+      id: generateEntryId(entryId),
       date,
       mood,
       achievement: achievement.trim(),
@@ -110,7 +111,7 @@ export default function Analytics() {
     const dataPoints = [];
 
     // 1. Gather points from live fire training sessions (Hour 3)
-    sessions.forEach((s, idx) => {
+    sessions.forEach((s) => {
       if (s.scores && s.scores.length > 0) {
         const totalScore = s.scores.reduce((a, b) => a + b, 0);
         const actualFormat = s.matchFormat || (s.scores.length * 10);
@@ -270,7 +271,6 @@ export default function Analytics() {
   const plotData = getChartPlotData();
 
   // Metrics calculations
-  const totalLogs = diaryEntries.length;
   const bestScore = rawGrowthData.length > 0 ? Math.max(...rawGrowthData.map(d => d.score)) : 0;
   const averageScore = rawGrowthData.length > 0 
     ? (rawGrowthData.reduce((sum, d) => sum + d.score, 0) / rawGrowthData.length).toFixed(1)

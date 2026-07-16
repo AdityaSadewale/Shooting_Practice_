@@ -2,6 +2,8 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { Play, Square, Activity, Volume2, VolumeX, MousePointer2, Zap } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
+const getRandomDelay = () => 1000 + Math.random() * 2000;
+
 export default function InteractiveDrills() {
   const [drillMode, setDrillMode] = useState('hold'); // 'hold' or 'flick'
   const [isActive, setIsActive] = useState(false);
@@ -145,7 +147,7 @@ export default function InteractiveDrills() {
   // Flick Drill specific
   const scheduleFlickTarget = () => {
     if (!isActive) return;
-    const delay = 1000 + Math.random() * 2000;
+    const delay = getRandomDelay();
     flickTimeoutRef.current = setTimeout(() => {
       spawnTarget();
       // Target disappears quickly
