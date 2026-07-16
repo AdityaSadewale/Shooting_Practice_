@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { saveUser } from '../lib/store';
 import { Target, Crosshair, Quote } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -16,7 +16,7 @@ export default function Onboarding({ onComplete }) {
   const [name, setName] = useState('');
   const [weapon, setWeapon] = useState('');
   const [error, setError] = useState('');
-  const [quote, setQuote] = useState(getRandomMotivation);
+  const [quote] = useState(getRandomMotivation);
 
   const handleSubmit = (e) => {
     e.preventDefault();

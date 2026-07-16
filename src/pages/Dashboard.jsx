@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { LogOut, LineChart, Target, Flame, Award, Apple, Globe, ExternalLink, Youtube, Crosshair, Brain, BookOpen, Crown } from 'lucide-react';
 import { clearUser, getStreak } from '../lib/store';
 import Timeline from '../components/Timeline';
