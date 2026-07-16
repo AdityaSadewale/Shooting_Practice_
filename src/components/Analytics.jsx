@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { getSessions, getDiaryEntries, saveDiaryEntry, deleteDiaryEntry } from '../lib/store';
 import { ComposedChart, Line, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { Target, TrendingUp, BookOpen, Calendar, Smile, Trophy, Trash2, Edit2, Plus, Search, Award, Activity, Heart, Sparkles, Save, Check, CalendarDays, Zap, Crown, Flame } from 'lucide-react';
@@ -15,8 +15,12 @@ const MOODS = [
 const generateEntryId = (existingId) => existingId || Date.now().toString();
 
 export default function Analytics() {
-  const [sessions, setSessions] = useState([]);
-  const [diaryEntries, setDiaryEntries] = useState([]);
+  const [sessions, setSessions] = useState(() => getSessions());
+  const [diaryEntries, setDiaryEntries] = useState(() => {
+    const list = getDiaryEntries();
+    list.sort((a, b) => new Date(b.date) - new Date(a.date));
+    return list;
+  });
   const [search, setSearch] = useState('');
   const [filterMood, setFilterMood] = useState('all');
   
@@ -41,10 +45,6 @@ export default function Analytics() {
     list.sort((a, b) => new Date(b.date) - new Date(a.date));
     setDiaryEntries(list);
   };
-
-  useEffect(() => {
-    loadData();
-  }, []);
 
   const handleSaveDiary = (e) => {
     e.preventDefault();

@@ -47,12 +47,15 @@ export default function Timeline({ user, onSessionSaved }) {
   // Removed local Audio Context for Zen BGM since it is now global
 
   useEffect(() => {
-    let interval = null;
-    if (timerActive && timeLeft > 0) {
-      interval = setInterval(() => setTimeLeft(l => l - 1), 1000);
-    } else if (timeLeft === 0) {
-      setTimerActive(false);
-    }
+    if (!timerActive || timeLeft <= 0) return;
+    const interval = setInterval(() => setTimeLeft(l => {
+      if (l <= 1) {
+        clearInterval(interval);
+        setTimerActive(false);
+        return 0;
+      }
+      return l - 1;
+    }), 1000);
     return () => clearInterval(interval);
   }, [timerActive, timeLeft]);
 

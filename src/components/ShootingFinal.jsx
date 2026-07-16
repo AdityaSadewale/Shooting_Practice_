@@ -17,7 +17,9 @@ export default function ShootingFinal({ userName = "Shooter" }) {
   const [playerNames, setPlayerNames] = useState(Array(6).fill(''));
 
   // New States and Refs for pausing/resuming and logging
-  const [hasSavedPausedState, setHasSavedPausedState] = useState(false);
+  const [hasSavedPausedState, setHasSavedPausedState] = useState(
+    () => !!localStorage.getItem('shooting_match_paused_state')
+  );
   const opponentTimersRef = useRef({});
 
   const addLog = useCallback((msg, type = 'info') => {
@@ -39,21 +41,8 @@ export default function ShootingFinal({ userName = "Shooter" }) {
     }
   };
   
-  // Keep players state names and structures in sync with custom inputs even before match starts!
-  useEffect(() => {
-    if (!isMatchActive) {
-      const initialPlayers = [];
-      for (let i = 0; i < numPlayers; i++) {
-        initialPlayers.push({
-          id: i,
-          name: (playerNames[i] && playerNames[i].trim()) || (i === 0 ? userName : `Player ${i + 1}`),
-          shots: [],
-          total: 0
-        });
-      }
-      setPlayers(initialPlayers);
-    }
-  }, [numPlayers, playerNames, userName, isMatchActive]);
+
+
   
   const timerRef = useRef(null);
   const sequenceTimeoutRef = useRef(null);
@@ -132,7 +121,7 @@ export default function ShootingFinal({ userName = "Shooter" }) {
       
       window.speechSynthesis.speak(utterance);
     }
-  }, [bgmEnabled]);
+  }, [bgmEnabled, restoreBgm]);
 
   const handleCommand = (cmd) => {
     switch (cmd) {
@@ -304,44 +293,10 @@ export default function ShootingFinal({ userName = "Shooter" }) {
     localStorage.removeItem('shooting_match_paused_state'); // Clear paused state
   };
 
-  // Timer logic for both loading and active phases
-  useEffect(() => {
-    const handleTimeUp = () => {
-      speak("Stop.");
-      confirmScores();
-    };
 
-    if (isMatchActive && !isPaused) {
-      if (phase === 'loading') {
-        timerRef.current = setInterval(() => {
-          setTimeLeft((prev) => {
-            if (prev <= 1) {
-              clearInterval(timerRef.current);
-              startActivePhase();
-              return 50;
-            }
-            setStatusText(`Loading (${prev - 1}s)...`);
-            return prev - 1;
-          });
-        }, 1000);
-      } else if (phase === 'active') {
-        timerRef.current = setInterval(() => {
-          setTimeLeft((prev) => {
-            if (prev <= 1) {
-              clearInterval(timerRef.current);
-              handleTimeUp();
-              return 0;
-            }
-            return prev - 1;
-          });
-        }, 1000);
-      }
-    }
 
-    return () => clearInterval(timerRef.current);
-  }, [phase, isMatchActive, isPaused, currentScores, startActivePhase, speak]); // currentScores needed for handleTimeUp scope
 
-  function confirmScores() {
+  const confirmScores = useCallback(() => {
     clearInterval(timerRef.current);
     clearTimeout(sequenceTimeoutRef.current);
 
@@ -465,7 +420,44 @@ export default function ShootingFinal({ userName = "Shooter" }) {
     
     setStatusText(`Round ${roundNum} Complete`);
     setPhase('round_completed');
-  };
+  }, [currentScores, roundNum, speak, addLog]);
+
+  // Timer logic for both loading and active phases
+  useEffect(() => {
+    const handleTimeUp = () => {
+      speak("Stop.");
+      confirmScores();
+    };
+
+    if (isMatchActive && !isPaused) {
+      if (phase === 'loading') {
+        timerRef.current = setInterval(() => {
+          setTimeLeft((prev) => {
+            if (prev <= 1) {
+              clearInterval(timerRef.current);
+              startActivePhase();
+              return 50;
+            }
+            setStatusText(`Loading (${prev - 1}s)...`);
+            return prev - 1;
+          });
+        }, 1000);
+      } else if (phase === 'active') {
+        timerRef.current = setInterval(() => {
+          setTimeLeft((prev) => {
+            if (prev <= 1) {
+              clearInterval(timerRef.current);
+              handleTimeUp();
+              return 0;
+            }
+            return prev - 1;
+          });
+        }, 1000);
+      }
+    }
+
+    return () => clearInterval(timerRef.current);
+  }, [phase, isMatchActive, isPaused, startActivePhase, speak, confirmScores]);
 
   const startNextShot = () => {
     if (isPaused) {
@@ -594,11 +586,6 @@ export default function ShootingFinal({ userName = "Shooter" }) {
   };
 
   useEffect(() => {
-    const saved = localStorage.getItem('shooting_match_paused_state');
-    if (saved) {
-      setHasSavedPausedState(true);
-    }
-    
     return () => {
       // Clear all active opponent timers on unmount
       if (opponentTimersRef.current) {
