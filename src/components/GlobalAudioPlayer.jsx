@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Music, PauseCircle, PlayCircle, SkipBack, SkipForward, Volume2, VolumeX } from 'lucide-react';
 
 
+
 const PLAYLIST = [
   {
     title: "Zen Shooting BGM",
