@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { Play, Square, Activity, Volume2, VolumeX, MousePointer2, Zap } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
+
 const getRandomDelay = () => 1000 + Math.random() * 2000;
 
 export default function InteractiveDrills() {
