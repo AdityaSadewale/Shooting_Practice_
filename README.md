@@ -9,7 +9,6 @@ A simple and interactive shooting practice application/game designed to improve 
 - 🔁 Replay / restart functionality
 
 ---
-
 ## 🛠️ Tech Stack
 
 - Language: (e.g., Python / JavaScript / C++ / etc.)
