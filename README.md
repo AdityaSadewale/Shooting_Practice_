@@ -1,7 +1,6 @@
 # 🎯 Shooting Practice
 A simple and interactive shooting practice application/game designed to improve aiming skills and reaction time. This project demonstrates basic game mechanics, user interaction, and real-time feedback.
 
-
 ---
 ## 🚀 Features
 - 🎯 Target-based shooting system
@@ -9,6 +8,7 @@ A simple and interactive shooting practice application/game designed to improve 
 - 🧠 Improves reaction time and accuracy
 - 🎮 Simple and user-friendly interface
 - 🔁 Replay / restart functionality
+
 
 ---
 ## 🛠️ Tech Stack
