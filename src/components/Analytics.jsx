@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 import { useState, useCallback } from 'react';
-=======
-import { useState } from 'react';
->>>>>>> b434b554a09d0eedfdd080bbb1e4b51a1ae0e8e8
 import { getSessions, getDiaryEntries, saveDiaryEntry, deleteDiaryEntry } from '../lib/store';
 import { ComposedChart, Line, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { Target, TrendingUp, BookOpen, Calendar, Smile, Trophy, Trash2, Edit2, Plus, Search, Award, Activity, Heart, Sparkles, Save, Check, CalendarDays, Zap, Crown, Flame } from 'lucide-react';
@@ -70,11 +66,7 @@ export default function Analytics() {
     }
 
     const newEntry = {
-<<<<<<< HEAD
-      id: entryId || Math.random().toString(36).substr(2, 9),
-=======
       id: generateEntryId(entryId),
->>>>>>> b434b554a09d0eedfdd080bbb1e4b51a1ae0e8e8
       date,
       mood,
       achievement: achievement.trim(),

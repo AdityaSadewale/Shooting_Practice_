@@ -5,8 +5,6 @@ import { AnimatePresence, motion } from 'framer-motion';
 const getFlickDelay = () => 1000 + Math.random() * 2000;
 
 
-const getRandomDelay = () => 1000 + Math.random() * 2000;
-
 export default function InteractiveDrills() {
   const [drillMode, setDrillMode] = useState('hold'); // 'hold' or 'flick'
   const [isActive, setIsActive] = useState(false);
@@ -168,24 +166,8 @@ export default function InteractiveDrills() {
     clearTimeout(flickTimeoutRef.current);
   };
 
-<<<<<<< HEAD
-=======
-  // Flick Drill specific
-  const scheduleFlickTarget = () => {
-    if (!isActive) return;
-    const delay = getRandomDelay();
-    flickTimeoutRef.current = setTimeout(() => {
-      spawnTarget();
-      // Target disappears quickly
-      flickTimeoutRef.current = setTimeout(() => {
-        setTargetVisible(false);
-        setAttempts(a => a + 1);
-        scheduleFlickTarget();
-      }, 400); // 400ms window
-    }, delay);
-  };
 
->>>>>>> b434b554a09d0eedfdd080bbb1e4b51a1ae0e8e8
+
   const handleFlickClick = () => {
     if (drillMode !== 'flick' || !targetVisible) return;
     clearTimeout(flickTimeoutRef.current);

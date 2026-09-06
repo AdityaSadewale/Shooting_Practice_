@@ -16,16 +16,7 @@ export default function Onboarding({ onComplete }) {
   const [name, setName] = useState('');
   const [weapon, setWeapon] = useState('');
   const [error, setError] = useState('');
-<<<<<<< HEAD
-  const [quote, setQuote] = useState('');
-
-  useEffect(() => {
-    const timer = setTimeout(() => setQuote(MOTIVATIONS[Math.floor(Math.random() * MOTIVATIONS.length)]), 0);
-    return () => clearTimeout(timer);
-  }, []);
-=======
   const [quote] = useState(getRandomMotivation);
->>>>>>> b434b554a09d0eedfdd080bbb1e4b51a1ae0e8e8
 
   const handleSubmit = (e) => {
     e.preventDefault();

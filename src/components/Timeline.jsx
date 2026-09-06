@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 import { CheckCircle2, ChevronDown, ChevronUp, Play, Square, Save, Gift, Music, Pause, SkipBack, SkipForward, Volume2, VolumeX, PauseCircle, PlayCircle } from 'lucide-react';
 import { saveSession } from '../lib/store';
@@ -40,8 +40,6 @@ export default function Timeline({ user, onSessionSaved }) {
   // Hour 4 state
   const [journal, setJournal] = useState('');
 
-  const [tip] = useState(() => CONFIDENCE_TIPS[Math.floor(Math.random() * CONFIDENCE_TIPS.length)]);
-
   const [tip] = useState(getRandomConfidenceTip);
 
 
@@ -53,18 +51,7 @@ export default function Timeline({ user, onSessionSaved }) {
 
 
 
-  useEffect(() => {
-    if (!timerActive || timeLeft <= 0) return;
-    const interval = setInterval(() => setTimeLeft(l => {
-      if (l <= 1) {
-        clearInterval(interval);
-        setTimerActive(false);
-        return 0;
-      }
-      return l - 1;
-    }), 1000);
-    return () => clearInterval(interval);
-  }, [timerActive, timeLeft]);
+
 
 
   const toggleHour = (hour) => {

@@ -54,19 +54,9 @@ export default function GlobalAudioPlayer() {
   const audioRef = useRef(null);
   const volumeRef = useRef(volume);
 
-<<<<<<< HEAD
-  const playBgm = useCallback(() => {
-    if (!bgmEnabled) return;
-    
-    if (!bgmAudioElementRef.current) {
-      bgmAudioElementRef.current = new Audio('/issf_bgm.mp3');
-      bgmAudioElementRef.current.loop = true;
-    }
-=======
   useEffect(() => {
     volumeRef.current = volume;
   }, [volume]);
->>>>>>> b434b554a09d0eedfdd080bbb1e4b51a1ae0e8e8
 
   // Create audio element once
   useEffect(() => {
