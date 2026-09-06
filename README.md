@@ -17,7 +17,6 @@ A simple and interactive shooting practice application/game designed to improve 
 - Tools: Git, VS Code
 
 ---
-
 ## ⚙️ Installation & Setup
 
 1. Clone the repository:
