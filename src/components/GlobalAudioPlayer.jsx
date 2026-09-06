@@ -10,7 +10,7 @@ export default function GlobalAudioPlayer() {
     if (!bgmEnabled) return;
     
     if (!bgmAudioElementRef.current) {
-      bgmAudioElementRef.current = new Audio('/issf_bgm.mp3.mp3');
+      bgmAudioElementRef.current = new Audio('/issf_bgm.mp3');
       bgmAudioElementRef.current.loop = true;
     }
 

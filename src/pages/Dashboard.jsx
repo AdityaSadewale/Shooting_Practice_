@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { LogOut, LineChart, Target, Flame, Award, Apple, Globe, ExternalLink, Youtube, Crosshair, Brain, BookOpen, Crown } from 'lucide-react';
 import { clearUser, getStreak } from '../lib/store';
 import Timeline from '../components/Timeline';
@@ -10,18 +10,13 @@ import TargetAnalysis from '../components/TargetAnalysis';
 import MentalYoga from '../components/MentalYoga';
 import PremiumFeatures from '../components/PremiumFeatures';
 import GlobalAudioPlayer from '../components/GlobalAudioPlayer';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 
 const shooter1 = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQzhvtnHo_DV7-AmiVihIdJPbZ6ioLh2zUCxQ&s';
-const shooter2 = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTzAf4QXhkdkpsE5bxeTJVQOeekVuDm5JdwIw&s';
 
 export default function Dashboard({ user, onLogout }) {
   const [view, setView] = useState('timeline');
-  const [streak, setStreak] = useState(0);
-
-  useEffect(() => {
-    setStreak(getStreak());
-  }, []);
+  const [streak, setStreak] = useState(() => getStreak());
 
   const handleLogout = () => {
     clearUser();

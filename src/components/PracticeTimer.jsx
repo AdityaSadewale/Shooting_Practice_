@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Play, Square, Pause, RotateCcw } from 'lucide-react';
 
 
@@ -15,7 +15,7 @@ export default function PracticeTimer({
   const [timeLeft, setTimeLeft] = useState(activeSeconds);
   const [isActive, setIsActive] = useState(false);
 
-  const speak = (text) => {
+  const speak = useCallback((text) => {
     if ('speechSynthesis' in window) {
       window.speechSynthesis.cancel();
       const utterance = new SpeechSynthesisUtterance(text);
@@ -23,13 +23,13 @@ export default function PracticeTimer({
       utterance.pitch = 1.0;
       window.speechSynthesis.speak(utterance);
     }
-  };
+  }, []);
 
   useEffect(() => {
-    let interval = null;
-    if (isActive && timeLeft > 0) {
-      interval = setInterval(() => setTimeLeft(l => l - 1), 1000);
-    } else if (isActive && timeLeft === 0) {
+    if (!isActive || timeLeft > 0) return;
+
+    // Use a timeout to defer state updates and avoid cascading renders
+    const timer = setTimeout(() => {
       if (phase === 'active') {
         speak(stopVocab);
         if (cycle >= totalCycles) {
@@ -46,9 +46,18 @@ export default function PracticeTimer({
         setTimeLeft(activeSeconds);
         setCycle(c => c + 1);
       }
+    }, 0);
+
+    return () => clearTimeout(timer);
+  }, [isActive, timeLeft, phase, cycle, activeSeconds, restSeconds, totalCycles, startVocab, stopVocab, speak]);
+
+  useEffect(() => {
+    let interval = null;
+    if (isActive && timeLeft > 0) {
+      interval = setInterval(() => setTimeLeft(l => l - 1), 1000);
     }
     return () => clearInterval(interval);
-  }, [isActive, timeLeft, phase, cycle, activeSeconds, restSeconds, totalCycles, startVocab, stopVocab]);
+  }, [isActive, timeLeft]);
 
   const toggleTimer = () => {
     if (phase === 'done') return;

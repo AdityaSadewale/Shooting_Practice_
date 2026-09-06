@@ -1,12 +1,12 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import { Crown, Sparkles, TrendingUp, Users, Video, Shield, CheckCircle2, Zap, Medal } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 export default function PremiumFeatures() {
   const tiers = [
     {
       name: "Starter Pro",
-      price: "2,500",
+      price: "5,500",
       icon: <Zap className="text-blue-400" size={28} />,
       color: "from-blue-500 to-blue-700",
       textColor: "text-blue-400",
@@ -20,7 +20,7 @@ export default function PremiumFeatures() {
     },
     {
       name: "Elite Pro",
-      price: "6,500",
+      price: "10,500",
       icon: <Crown className="text-yellow-400" size={28} />,
       color: "from-yellow-500 to-yellow-700",
       textColor: "text-yellow-400",
@@ -36,7 +36,7 @@ export default function PremiumFeatures() {
     },
     {
       name: "Champion Pro",
-      price: "8,500",
+      price: "13,500",
       icon: <Medal className="text-purple-400" size={28} />,
       color: "from-purple-500 to-purple-700",
       textColor: "text-purple-400",

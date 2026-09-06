@@ -17,7 +17,8 @@ export default function Onboarding({ onComplete }) {
   const [quote, setQuote] = useState('');
 
   useEffect(() => {
-    setQuote(MOTIVATIONS[Math.floor(Math.random() * MOTIVATIONS.length)]);
+    const timer = setTimeout(() => setQuote(MOTIVATIONS[Math.floor(Math.random() * MOTIVATIONS.length)]), 0);
+    return () => clearTimeout(timer);
   }, []);
 
   const handleSubmit = (e) => {

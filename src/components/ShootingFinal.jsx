@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Play, Square, Pause, Mic, Crosshair, Award, Timer, Users, Trophy, Music } from 'lucide-react';
-import { motion } from 'framer-motion';
 import { getUser } from '../lib/store';
 
 export default function ShootingFinal({ userName = "Shooter" }) {
@@ -51,7 +50,8 @@ export default function ShootingFinal({ userName = "Shooter" }) {
           total: 0
         });
       }
-      setPlayers(initialPlayers);
+      // Defer state update to avoid cascading renders
+      setTimeout(() => setPlayers(initialPlayers), 0);
     }
   }, [numPlayers, playerNames, userName, isMatchActive]);
   
@@ -59,10 +59,7 @@ export default function ShootingFinal({ userName = "Shooter" }) {
   const sequenceTimeoutRef = useRef(null);
 
   // Audio Context for BGM
-  const audioCtxRef = useRef(null);
-  const bgmGainRef = useRef(null);
   const bgmAudioElementRef = useRef(null);
-  const bgmSourceNodeRef = useRef(null);
 
   // Initialize Voices
   useEffect(() => {
@@ -102,19 +99,19 @@ export default function ShootingFinal({ userName = "Shooter" }) {
     }
   }, []);
 
-  const duckBgm = () => {
+  const duckBgm = useCallback(() => {
     if (bgmAudioElementRef.current) {
       // Lower volume to 5% while voice speaks
       bgmAudioElementRef.current.volume = 0.05;
     }
-  };
+  }, []);
 
-  const restoreBgm = () => {
+  const restoreBgm = useCallback(() => {
     if (bgmAudioElementRef.current && bgmEnabled) {
       // Restore volume to soft 15% focus volume after voice speaks
       bgmAudioElementRef.current.volume = 0.15;
     }
-  };
+  }, [bgmEnabled]);
 
   useEffect(() => {
     if (bgmEnabled) playBgm();
@@ -122,7 +119,7 @@ export default function ShootingFinal({ userName = "Shooter" }) {
     return stopBgm;
   }, [bgmEnabled, playBgm, stopBgm]);
 
-  const speak = (text) => {
+  const speak = useCallback((text) => {
     if ('speechSynthesis' in window) {
       window.speechSynthesis.cancel();
       const utterance = new SpeechSynthesisUtterance(text);
@@ -135,7 +132,7 @@ export default function ShootingFinal({ userName = "Shooter" }) {
       
       window.speechSynthesis.speak(utterance);
     }
-  };
+  }, [duckBgm, restoreBgm]);
 
   const handleCommand = (cmd) => {
     switch (cmd) {
@@ -225,7 +222,7 @@ export default function ShootingFinal({ userName = "Shooter" }) {
         }
       }
     });
-  }, [players, roundNum, startOpponentShot, addLog, isPaused]);
+  }, [players, roundNum, startOpponentShot, addLog, isPaused, speak]);
 
   const nextShotSequence = () => {
     if (isPaused) {
@@ -307,46 +304,7 @@ export default function ShootingFinal({ userName = "Shooter" }) {
     localStorage.removeItem('shooting_match_paused_state'); // Clear paused state
   };
 
-  // Timer logic for both loading and active phases
-  useEffect(() => {
-    if (isMatchActive && !isPaused) {
-      if (phase === 'loading') {
-        timerRef.current = setInterval(() => {
-          setTimeLeft((prev) => {
-            if (prev <= 1) {
-              clearInterval(timerRef.current);
-              startActivePhase();
-              return 50;
-            }
-            setStatusText(`Loading (${prev - 1}s)...`);
-            return prev - 1;
-          });
-        }, 1000);
-      } else if (phase === 'active') {
-        timerRef.current = setInterval(() => {
-          setTimeLeft((prev) => {
-            if (prev <= 1) {
-              clearInterval(timerRef.current);
-              handleTimeUp();
-              return 0;
-            }
-            return prev - 1;
-          });
-        }, 1000);
-      }
-    }
-
-    return () => clearInterval(timerRef.current);
-  }, [phase, isMatchActive, isPaused, currentScores, startActivePhase]); // currentScores needed for handleTimeUp scope
-
-  const handleTimeUp = () => {
-    speak("Stop.");
-    
-    // Automatically confirm scores after 50 seconds expire
-    confirmScores();
-  };
-
-  const confirmScores = () => {
+  const confirmScores = useCallback(() => {
     clearInterval(timerRef.current);
     clearTimeout(sequenceTimeoutRef.current);
 
@@ -438,16 +396,12 @@ export default function ShootingFinal({ userName = "Shooter" }) {
         setPhase('idle');
         speak(announcement);
       } else {
-        // Multi-player rules for announcement:
-        // After every 5 shots, tell the lead and ALL participating shooters' scores!
         if (roundNum % 5 === 0) {
            announcement = `Standings after ${roundNum} shots. `;
-           // List each shooter's name and total score
            finalized.forEach(p => {
               announcement += `${p.name} score is ${formatSpokenScore(p.total)}. `;
            });
            
-           // Tell who is leading and by how much
            if (sorted.length > 1) {
               const leader = sorted[0];
               const runnerUp = sorted[1];
@@ -455,7 +409,6 @@ export default function ShootingFinal({ userName = "Shooter" }) {
               announcement += `First place, ${leader.name} leads by ${formatSpokenScore(parseFloat(diff))} points. `;
            }
            
-           // Declare players currently in the game
            announcement += "And lastly, ";
            finalized.forEach(p => {
               announcement += `${p.name} is in the game. `;
@@ -470,7 +423,44 @@ export default function ShootingFinal({ userName = "Shooter" }) {
     
     setStatusText(`Round ${roundNum} Complete`);
     setPhase('round_completed');
-  };
+  }, [currentScores, roundNum, speak]);
+
+  const handleTimeUp = useCallback(() => {
+    speak("Stop.");
+    confirmScores();
+  }, [speak, confirmScores]);
+
+  // Timer logic for both loading and active phases
+  useEffect(() => {
+    if (isMatchActive && !isPaused) {
+      if (phase === 'loading') {
+        timerRef.current = setInterval(() => {
+          setTimeLeft((prev) => {
+            if (prev <= 1) {
+              clearInterval(timerRef.current);
+              startActivePhase();
+              return 50;
+            }
+            setStatusText(`Loading (${prev - 1}s)...`);
+            return prev - 1;
+          });
+        }, 1000);
+      } else if (phase === 'active') {
+        timerRef.current = setInterval(() => {
+          setTimeLeft((prev) => {
+            if (prev <= 1) {
+              clearInterval(timerRef.current);
+              handleTimeUp();
+              return 0;
+            }
+            return prev - 1;
+          });
+        }, 1000);
+      }
+    }
+
+    return () => clearInterval(timerRef.current);
+  }, [phase, isMatchActive, isPaused, currentScores, startActivePhase, handleTimeUp]);
 
   const startNextShot = () => {
     if (isPaused) {
@@ -601,7 +591,7 @@ export default function ShootingFinal({ userName = "Shooter" }) {
   useEffect(() => {
     const saved = localStorage.getItem('shooting_match_paused_state');
     if (saved) {
-      setHasSavedPausedState(true);
+      window.setTimeout(() => setHasSavedPausedState(true), 0);
     }
     
     return () => {
@@ -645,8 +635,6 @@ export default function ShootingFinal({ userName = "Shooter" }) {
       // Only modify the players who are tied in the last round!
       const isTied = tiedPlayers.some(tp => tp.id === p.id);
       if (isTied) {
-        const originalLastShot = parseFloat(p.shots[p.shots.length - 1]);
-        
         // Get the manually input reshot score from currentScores!
         let reshotVal = parseFloat(currentScores[p.id]);
         
@@ -936,7 +924,7 @@ export default function ShootingFinal({ userName = "Shooter" }) {
                     <p className="font-bold text-yellow-500">Loading next shot sequence (10s)...</p>
                   </div>
                 ) : (
-                  <p className="italic">Click "Start Match" to begin the multi-player Olympic final simulation.</p>
+                  <p className="italic">Click "Start Match" to begin the multi-player final simulation.</p>
                 )}
               </div>
             )}

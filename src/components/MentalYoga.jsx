@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Brain, HeartPulse, Activity, Zap, Star, ShieldCheck, Crown, ArrowRight, Eye, Wind, Sun, Moon, Target, Gamepad2, Calendar, Trophy, Lock, CheckCircle2 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 
 export default function MentalYoga() {
   const [selectedDay, setSelectedDay] = useState(1);

@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import { getSessions, getDiaryEntries, saveDiaryEntry, deleteDiaryEntry } from '../lib/store';
 import { ComposedChart, Line, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { Target, TrendingUp, BookOpen, Calendar, Smile, Trophy, Trash2, Edit2, Plus, Search, Award, Activity, Heart, Sparkles, Save, Check, CalendarDays, Zap, Crown, Flame } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 
 const MOODS = [
   { id: 'epic', label: 'Epic / On Fire', emoji: '🔥', color: 'from-orange-500 to-red-600', bg: 'bg-orange-500/10 border-orange-500/20 text-orange-500' },
@@ -13,8 +13,12 @@ const MOODS = [
 ];
 
 export default function Analytics() {
-  const [sessions, setSessions] = useState([]);
-  const [diaryEntries, setDiaryEntries] = useState([]);
+  const [sessions, setSessions] = useState(() => getSessions());
+  const [diaryEntries, setDiaryEntries] = useState(() => {
+    const list = getDiaryEntries();
+    list.sort((a, b) => new Date(b.date) - new Date(a.date));
+    return list;
+  });
   const [search, setSearch] = useState('');
   const [filterMood, setFilterMood] = useState('all');
   
@@ -33,11 +37,6 @@ export default function Analytics() {
   // Chart filter state (7d, 30d, 90d, 1y)
   const [chartFilter, setChartFilter] = useState('30d');
 
-  
-  useEffect(() => {
-    loadData();
-  }, []);
-
   const loadData = () => {
     setSessions(getSessions());
     const list = getDiaryEntries();
@@ -45,7 +44,19 @@ export default function Analytics() {
     setDiaryEntries(list);
   };
 
-  const handleSaveDiary = (e) => {
+
+  const resetForm = useCallback(() => {
+    setEntryId('');
+    setDate(new Date().toISOString().split('T')[0]);
+    setMood('calm');
+    setAchievement('');
+    setFocusArea('');
+    setScoreInput('');
+    setNotes('');
+    setIsEditing(false);
+  }, []);
+
+  const handleSaveDiary = useCallback((e) => {
     e.preventDefault();
     if (!achievement.trim() || !focusArea.trim()) {
       alert("Please fill in today's achievement and focus points!");
@@ -53,7 +64,7 @@ export default function Analytics() {
     }
 
     const newEntry = {
-      id: entryId || Date.now().toString(),
+      id: entryId || Math.random().toString(36).substr(2, 9),
       date,
       mood,
       achievement: achievement.trim(),
@@ -68,18 +79,7 @@ export default function Analytics() {
 
     setIsSuccess(true);
     setTimeout(() => setIsSuccess(false), 3000);
-  };
-
-  const resetForm = () => {
-    setEntryId('');
-    setDate(new Date().toISOString().split('T')[0]);
-    setMood('calm');
-    setAchievement('');
-    setFocusArea('');
-    setScoreInput('');
-    setNotes('');
-    setIsEditing(false);
-  };
+  }, [entryId, date, mood, achievement, focusArea, scoreInput, notes, resetForm]);
 
   const handleEditDiary = (entry) => {
     setEntryId(entry.id);
@@ -110,7 +110,7 @@ export default function Analytics() {
     const dataPoints = [];
 
     // 1. Gather points from live fire training sessions (Hour 3)
-    sessions.forEach((s, idx) => {
+    sessions.forEach((s) => {
       if (s.scores && s.scores.length > 0) {
         const totalScore = s.scores.reduce((a, b) => a + b, 0);
         const actualFormat = s.matchFormat || (s.scores.length * 10);
@@ -270,7 +270,6 @@ export default function Analytics() {
   const plotData = getChartPlotData();
 
   // Metrics calculations
-  const totalLogs = diaryEntries.length;
   const bestScore = rawGrowthData.length > 0 ? Math.max(...rawGrowthData.map(d => d.score)) : 0;
   const averageScore = rawGrowthData.length > 0 
     ? (rawGrowthData.reduce((sum, d) => sum + d.score, 0) / rawGrowthData.length).toFixed(1)
@@ -527,7 +526,7 @@ export default function Analytics() {
                             
                             {entry.notes && (
                               <p className="bg-background/50 border border-border/40 p-2.5 rounded-lg mt-1 italic text-muted-foreground leading-relaxed whitespace-pre-wrap">
-                                "{entry.notes}"
+                                {entry.notes}
                               </p>
                             )}
                           </div>

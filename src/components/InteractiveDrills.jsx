@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Play, Square, Activity, Volume2, VolumeX, MousePointer2, Zap } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
+
+const getFlickDelay = () => 1000 + Math.random() * 2000;
 
 export default function InteractiveDrills() {
   const [drillMode, setDrillMode] = useState('hold'); // 'hold' or 'flick'
@@ -27,6 +29,8 @@ export default function InteractiveDrills() {
   
   // Flick specific
   const flickTimeoutRef = useRef(null);
+  // Ref to track isActive for use inside setTimeout callbacks (avoids stale closure)
+  const isActiveRef = useRef(false);
 
   // --- Audio System ---
   useEffect(() => {
@@ -113,20 +117,38 @@ export default function InteractiveDrills() {
   }, [noiseEnabled, isActive]);
 
   // --- Drill Logic ---
-  const spawnTarget = () => {
+  const spawnTarget = useCallback(() => {
     const margin = 10;
     const x = margin + Math.random() * (100 - margin * 2);
     const y = margin + Math.random() * (100 - margin * 2);
     setTargetPos({ x, y });
     setTargetVisible(true);
     setIsHolding(false);
-  };
+  }, []);
+
+  // Flick Drill specific – uses isActiveRef to avoid stale closure inside setTimeout
+  function scheduleFlickTarget() {
+    if (!isActiveRef.current) return;
+    const delay = getFlickDelay();
+    flickTimeoutRef.current = setTimeout(() => {
+      if (!isActiveRef.current) return;
+      spawnTarget();
+      // Target disappears quickly after 400ms window
+      flickTimeoutRef.current = setTimeout(() => {
+        if (!isActiveRef.current) return;
+        setTargetVisible(false);
+        setAttempts(a => a + 1);
+        scheduleFlickTarget();
+      }, 400);
+    }, delay);
+  }
 
   const startDrill = () => {
+    isActiveRef.current = true;
     setIsActive(true);
     setScore(0);
     setAttempts(0);
-    
+
     if (drillMode === 'hold') {
       setTimeout(spawnTarget, 1000);
     } else {
@@ -135,26 +157,12 @@ export default function InteractiveDrills() {
   };
 
   const stopDrill = () => {
+    isActiveRef.current = false;
     setIsActive(false);
     setTargetVisible(false);
     setIsHolding(false);
     clearInterval(holdTimerRef.current);
     clearTimeout(flickTimeoutRef.current);
-  };
-
-  // Flick Drill specific
-  const scheduleFlickTarget = () => {
-    if (!isActive) return;
-    const delay = 1000 + Math.random() * 2000;
-    flickTimeoutRef.current = setTimeout(() => {
-      spawnTarget();
-      // Target disappears quickly
-      flickTimeoutRef.current = setTimeout(() => {
-        setTargetVisible(false);
-        setAttempts(a => a + 1);
-        scheduleFlickTarget();
-      }, 400); // 400ms window
-    }, delay);
   };
 
   const handleFlickClick = () => {
@@ -245,7 +253,7 @@ export default function InteractiveDrills() {
               </div>
               {metroEnabled && (
                 <div className="flex items-center gap-3 bg-background p-2 rounded border border-border">
-                  <input type="range" min="50" max="120" value={bpm} onChange={e => setBpm(Number(e.target.value))} className="flex-1 accent-red-500" />
+                  <input type="range" min="50" max="120" value={bpm} onChange={e => setBpm(Number(e.target.value))} aria-label="BPM range" className="flex-1 accent-red-500" />
                   <span className="text-xs font-mono font-bold w-12 text-right">{bpm} BPM</span>
                 </div>
               )}

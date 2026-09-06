@@ -1,8 +1,9 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState } from 'react';
 import { CheckCircle2, ChevronDown, ChevronUp, Play, Square, Save, Gift, Music, Pause, SkipBack, SkipForward, Volume2, VolumeX, PauseCircle, PlayCircle } from 'lucide-react';
 import { saveSession } from '../lib/store';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import PracticeTimer from './PracticeTimer';
+import MatchSimulationTimer from './MatchSimulationTimer';
 
 const CONFIDENCE_TIPS = [
   "Visualize the perfect follow-through before every shot.",
@@ -25,28 +26,17 @@ export default function Timeline({ user, onSessionSaved }) {
   
   // Hour 3 state
   const [matchFormat, setMatchFormat] = useState(60); // 20, 40, or 60 shot match
-  const [timeLeft, setTimeLeft] = useState(75 * 60); // 75 mins in seconds
-  const [timerActive, setTimerActive] = useState(false);
-  const [scores, setScores] = useState(Array(6).fill(''));
   
   // Hour 4 state
   const [journal, setJournal] = useState('');
-  const [tip] = useState(CONFIDENCE_TIPS[Math.floor(Math.random() * CONFIDENCE_TIPS.length)]);
+  const [tip] = useState(() => CONFIDENCE_TIPS[Math.floor(Math.random() * CONFIDENCE_TIPS.length)]);
 
   // Reward state
   const [rewardTip, setRewardTip] = useState('');
 
   // Removed local Audio Context for Zen BGM since it is now global
 
-  useEffect(() => {
-    let interval = null;
-    if (timerActive && timeLeft > 0) {
-      interval = setInterval(() => setTimeLeft(l => l - 1), 1000);
-    } else if (timeLeft === 0) {
-      setTimerActive(false);
-    }
-    return () => clearInterval(interval);
-  }, [timerActive, timeLeft]);
+
 
   const toggleHour = (hour) => {
     setExpandedHour(expandedHour === hour ? null : hour);
@@ -61,47 +51,24 @@ export default function Timeline({ user, onSessionSaved }) {
 
   const handleMatchFormatChange = (format) => {
     setMatchFormat(format);
-    const count = format === 20 ? 2 : format === 40 ? 4 : 6;
-    setScores(Array(count).fill(''));
-    setTimeLeft(format === 20 ? 25 * 60 : format === 40 ? 50 * 60 : 75 * 60);
-    setTimerActive(false);
   };
 
-  const formatTime = (seconds) => {
-    const min = Math.floor(seconds / 60);
-    const sec = seconds % 60;
-    return `${min}:${sec.toString().padStart(2, '0')}`;
-  };
 
-  const handleScoreChange = (index, val) => {
-    const newScores = [...scores];
-    newScores[index] = val;
-    setScores(newScores);
-  };
 
   const finishSession = () => {
-    const activeScores = scores.map(Number).filter(n => !isNaN(n) && n > 0);
-    const isDecimal = activeScores.some(val => val.toString().includes('.'));
-    const maxScore = isDecimal 
-      ? (matchFormat === 20 ? 218.0 : matchFormat === 40 ? 436.0 : 654.0)
-      : (matchFormat === 20 ? 200 : matchFormat === 40 ? 400 : 600);
-
     const session = {
       id: Date.now().toString(),
       date: new Date().toISOString(),
-      weapon: user.weapon,
+      weapon: user?.weapon,
       completedHours,
-      scores: activeScores,
+      scores: [],
       matchFormat,
-      maxScore,
+      maxScore: matchFormat === 20 ? 200 : matchFormat === 40 ? 400 : 600,
       journal
     };
     saveSession(session);
-    
-    // Generate reward tip
     const randomReward = REWARD_TIPS[Math.floor(Math.random() * REWARD_TIPS.length)];
     setRewardTip(randomReward);
-
     if (onSessionSaved) onSessionSaved();
   };
 
@@ -188,69 +155,10 @@ export default function Timeline({ user, onSessionSaved }) {
             </div>
           </div>
 
-          <div className="flex items-center justify-between bg-accent/20 p-4 rounded-xl border border-border">
-            <div>
-              <span className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest block mb-0.5">Match Timer</span>
-              <div className="text-2xl font-mono font-bold text-foreground">
-                {formatTime(timeLeft)}
-              </div>
-            </div>
-            <div className="flex gap-2">
-              <button onClick={() => setTimerActive(!timerActive)} className="p-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">
-                {timerActive ? <Square fill="currentColor" size={16} /> : <Play fill="currentColor" size={16} />}
-              </button>
-              <button 
-                onClick={() => { 
-                  setTimeLeft(matchFormat === 20 ? 25*60 : matchFormat === 40 ? 50*60 : 75*60); 
-                  setTimerActive(false); 
-                }} 
-                className="px-3 py-1 bg-secondary text-secondary-foreground rounded-md text-sm hover:bg-secondary/80"
-              >
-                Reset
-              </button>
-            </div>
-          </div>
-
-          <div>
-            <p className="text-sm font-medium mb-3">Score Entry ({scores.length} Series of 10 Shots)</p>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-              {scores.map((score, i) => (
-                <div key={i} className="bg-background border border-border/70 p-3 rounded-lg">
-                  <label className="text-xs text-muted-foreground block mb-1">Series {i + 1} (Max 100 or 109.0)</label>
-                  <input
-                    type="number"
-                    step="0.1"
-                    value={score}
-                    onChange={(e) => handleScoreChange(i, e.target.value)}
-                    placeholder={i % 2 === 0 ? "e.g. 102.4" : "e.g. 96"}
-                    className="w-full bg-transparent border-0 border-b border-border/80 focus:border-blue-500 py-1 text-base font-mono focus:outline-none focus:ring-0"
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Live Total Calculation */}
-          {scores.some(s => s !== '') && (
-            <div className="bg-gradient-to-r from-blue-500/10 to-teal-500/10 border border-blue-500/20 p-4 rounded-xl flex items-center justify-between">
-              <div>
-                <span className="text-xs text-muted-foreground uppercase font-bold tracking-wider block">Live Calculated Score</span>
-                <span className="text-[10px] text-muted-foreground">Based on {scores.filter(Boolean).length} completed series</span>
-              </div>
-              <div className="text-right">
-                <span className="text-2xl font-black font-mono text-blue-500">
-                  {scores.map(Number).filter(n => !isNaN(n) && n > 0).reduce((a, b) => a + b, 0).toFixed(1)}
-                </span>
-                <span className="text-xs text-muted-foreground font-mono font-bold">
-                  {' '}/ {
-                    scores.map(Number).filter(n => !isNaN(n) && n > 0).some(v => v.toString().includes('.'))
-                      ? (matchFormat === 20 ? 218.0 : matchFormat === 40 ? 436.0 : 654.0)
-                      : (matchFormat === 20 ? 200 : matchFormat === 40 ? 400 : 600)
-                  }
-                </span>
-              </div>
-            </div>
-          )}
+          <MatchSimulationTimer 
+            matchFormat={matchFormat}
+            weapon={user?.weapon}
+          />
 
           <button 
             onClick={() => markDone(3)}
