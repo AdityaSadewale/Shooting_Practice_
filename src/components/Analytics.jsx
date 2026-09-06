@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import { useState, useCallback } from 'react';
+=======
+import { useState } from 'react';
+>>>>>>> b434b554a09d0eedfdd080bbb1e4b51a1ae0e8e8
 import { getSessions, getDiaryEntries, saveDiaryEntry, deleteDiaryEntry } from '../lib/store';
 import { ComposedChart, Line, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { Target, TrendingUp, BookOpen, Calendar, Smile, Trophy, Trash2, Edit2, Plus, Search, Award, Activity, Heart, Sparkles, Save, Check, CalendarDays, Zap, Crown, Flame } from 'lucide-react';
@@ -11,6 +15,8 @@ const MOODS = [
   { id: 'tired', label: 'Tired / Low Energy', emoji: '😴', color: 'from-purple-500 to-pink-600', bg: 'bg-purple-500/10 border-purple-500/20 text-purple-500' },
   { id: 'distracted', label: 'Unfocused', emoji: '🌀', color: 'from-amber-500 to-yellow-600', bg: 'bg-amber-500/10 border-amber-500/20 text-amber-500' }
 ];
+
+const generateEntryId = (existingId) => existingId || Date.now().toString();
 
 export default function Analytics() {
   const [sessions, setSessions] = useState(() => getSessions());
@@ -64,7 +70,11 @@ export default function Analytics() {
     }
 
     const newEntry = {
+<<<<<<< HEAD
       id: entryId || Math.random().toString(36).substr(2, 9),
+=======
+      id: generateEntryId(entryId),
+>>>>>>> b434b554a09d0eedfdd080bbb1e4b51a1ae0e8e8
       date,
       mood,
       achievement: achievement.trim(),

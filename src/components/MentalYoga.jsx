@@ -95,6 +95,7 @@ export default function MentalYoga() {
           ))}
         </div>
 
+
         
         {/* Schedule Content */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 relative">
@@ -220,6 +221,7 @@ export default function MentalYoga() {
         </div>
       </section>
 
+      
       {/* Mental Strength & Yoga Basics Section */}
       <section className="bg-card border border-border rounded-xl p-6 shadow-sm">
         <div className="flex items-center gap-2 mb-6">

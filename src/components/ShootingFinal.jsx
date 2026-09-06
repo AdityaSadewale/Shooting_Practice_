@@ -16,7 +16,9 @@ export default function ShootingFinal({ userName = "Shooter" }) {
   const [playerNames, setPlayerNames] = useState(Array(6).fill(''));
 
   // New States and Refs for pausing/resuming and logging
-  const [hasSavedPausedState, setHasSavedPausedState] = useState(false);
+  const [hasSavedPausedState, setHasSavedPausedState] = useState(
+    () => !!localStorage.getItem('shooting_match_paused_state')
+  );
   const opponentTimersRef = useRef({});
 
   const addLog = useCallback((msg, type = 'info') => {
@@ -38,6 +40,7 @@ export default function ShootingFinal({ userName = "Shooter" }) {
     }
   };
   
+<<<<<<< HEAD
   // Keep players state names and structures in sync with custom inputs even before match starts!
   useEffect(() => {
     if (!isMatchActive) {
@@ -54,11 +57,19 @@ export default function ShootingFinal({ userName = "Shooter" }) {
       setTimeout(() => setPlayers(initialPlayers), 0);
     }
   }, [numPlayers, playerNames, userName, isMatchActive]);
+=======
+
+
+>>>>>>> b434b554a09d0eedfdd080bbb1e4b51a1ae0e8e8
   
   const timerRef = useRef(null);
   const sequenceTimeoutRef = useRef(null);
 
+<<<<<<< HEAD
   // Audio Context for BGM
+=======
+  // Audio Element for BGM
+>>>>>>> b434b554a09d0eedfdd080bbb1e4b51a1ae0e8e8
   const bgmAudioElementRef = useRef(null);
 
   // Initialize Voices
@@ -132,7 +143,11 @@ export default function ShootingFinal({ userName = "Shooter" }) {
       
       window.speechSynthesis.speak(utterance);
     }
+<<<<<<< HEAD
   }, [duckBgm, restoreBgm]);
+=======
+  }, [bgmEnabled, restoreBgm]);
+>>>>>>> b434b554a09d0eedfdd080bbb1e4b51a1ae0e8e8
 
   const handleCommand = (cmd) => {
     switch (cmd) {
@@ -304,6 +319,12 @@ export default function ShootingFinal({ userName = "Shooter" }) {
     localStorage.removeItem('shooting_match_paused_state'); // Clear paused state
   };
 
+<<<<<<< HEAD
+=======
+
+
+
+>>>>>>> b434b554a09d0eedfdd080bbb1e4b51a1ae0e8e8
   const confirmScores = useCallback(() => {
     clearInterval(timerRef.current);
     clearTimeout(sequenceTimeoutRef.current);
@@ -423,6 +444,7 @@ export default function ShootingFinal({ userName = "Shooter" }) {
     
     setStatusText(`Round ${roundNum} Complete`);
     setPhase('round_completed');
+<<<<<<< HEAD
   }, [currentScores, roundNum, speak]);
 
   const handleTimeUp = useCallback(() => {
@@ -432,6 +454,17 @@ export default function ShootingFinal({ userName = "Shooter" }) {
 
   // Timer logic for both loading and active phases
   useEffect(() => {
+=======
+  }, [currentScores, roundNum, speak, addLog]);
+
+  // Timer logic for both loading and active phases
+  useEffect(() => {
+    const handleTimeUp = () => {
+      speak("Stop.");
+      confirmScores();
+    };
+
+>>>>>>> b434b554a09d0eedfdd080bbb1e4b51a1ae0e8e8
     if (isMatchActive && !isPaused) {
       if (phase === 'loading') {
         timerRef.current = setInterval(() => {
@@ -460,7 +493,11 @@ export default function ShootingFinal({ userName = "Shooter" }) {
     }
 
     return () => clearInterval(timerRef.current);
+<<<<<<< HEAD
   }, [phase, isMatchActive, isPaused, currentScores, startActivePhase, handleTimeUp]);
+=======
+  }, [phase, isMatchActive, isPaused, startActivePhase, speak, confirmScores]);
+>>>>>>> b434b554a09d0eedfdd080bbb1e4b51a1ae0e8e8
 
   const startNextShot = () => {
     if (isPaused) {
@@ -589,11 +626,14 @@ export default function ShootingFinal({ userName = "Shooter" }) {
   };
 
   useEffect(() => {
+<<<<<<< HEAD
     const saved = localStorage.getItem('shooting_match_paused_state');
     if (saved) {
       window.setTimeout(() => setHasSavedPausedState(true), 0);
     }
     
+=======
+>>>>>>> b434b554a09d0eedfdd080bbb1e4b51a1ae0e8e8
     return () => {
       // Clear all active opponent timers on unmount
       if (opponentTimersRef.current) {

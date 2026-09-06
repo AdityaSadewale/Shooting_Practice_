@@ -1,0 +1,169 @@
+﻿
+> shooters@0.0.0 lint
+> eslint .
+
+
+C:\Users\T@LENT\OneDrive\Desktop\Shooters\src\App.jsx
+  12:5  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+  10 |
+  11 |   useEffect(() => {
+> 12 |     setUser(getUser());
+     |     ^^^^^^^ Avoid calling setState() directly within an effect
+  13 |     setLoading(false);
+  14 |   }, []);
+  15 |  react-hooks/set-state-in-effect
+
+C:\Users\T@LENT\OneDrive\Desktop\Shooters\src\components\Analytics.jsx
+    5:10  error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   no-unused-vars
+   37:5   error  Error: Cannot access variable before it is declared
+
+`loadData` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+  35 |
+  36 |   useEffect(() => {
+> 37 |     loadData();
+     |     ^^^^^^^^ `loadData` accessed before it is declared
+  38 |   }, []);
+  39 |
+  40 |   const loadData = () => {
+
+  38 |   }, []);
+  39 |
+> 40 |   const loadData = () => {
+     |   ^^^^^^^^^^^^^^^^^^^^^^^^
+> 41 |     setSessions(getSessions());
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 42 |     const list = getDiaryEntries();
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 43 |     list.sort((a, b) => new Date(b.date) - new Date(a.date));
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 44 |     setDiaryEntries(list);
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 45 |   };
+     | ^^^^^ `loadData` is declared here
+  46 |
+  47 |   const handleSaveDiary = (e) => {
+  48 |     e.preventDefault();  react-hooks/immutability
+   55:22  error  Error: Cannot call impure function during render
+
+`Date.now` is an impure function. Calling an impure function can produce unstable results that update unpredictably when the component happens to re-render. (https://react.dev/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent).
+
+  53 |
+  54 |     const newEntry = {
+> 55 |       id: entryId || Date.now().toString(),
+     |                      ^^^^^^^^^^ Cannot call impure function
+  56 |       date,
+  57 |       mood,
+  58 |       achievement: achievement.trim(),                                                                                                                                                                                                                                                                                                                                                                                   react-hooks/purity
+  112:26  error  'idx' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 no-unused-vars
+  272:9   error  'totalLogs' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       no-unused-vars
+
+C:\Users\T@LENT\OneDrive\Desktop\Shooters\src\components\DietInfo.jsx
+  3:10  error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Users\T@LENT\OneDrive\Desktop\Shooters\src\components\InteractiveDrills.jsx
+    3:10  error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          no-unused-vars
+  148:26  error  Error: Cannot call impure function during render
+
+`Math.random` is an impure function. Calling an impure function can produce unstable results that update unpredictably when the component happens to re-render. (https://react.dev/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent).
+
+  146 |   const scheduleFlickTarget = () => {
+  147 |     if (!isActive) return;
+> 148 |     const delay = 1000 + Math.random() * 2000;
+      |                          ^^^^^^^^^^^^^ Cannot call impure function
+  149 |     flickTimeoutRef.current = setTimeout(() => {
+  150 |       spawnTarget();
+  151 |       // Target disappears quickly  react-hooks/purity
+
+C:\Users\T@LENT\OneDrive\Desktop\Shooters\src\components\MentalYoga.jsx
+  3:10  error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Users\T@LENT\OneDrive\Desktop\Shooters\src\components\PracticeTimer.jsx
+   1:31  error  'useRef' is defined but never used. Allowed unused vars must match /^[A-Z_]/u                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              no-unused-vars
+  35:11  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+  33 |         speak(stopVocab);
+  34 |         if (cycle >= totalCycles) {
+> 35 |           setPhase('done');
+     |           ^^^^^^^^ Avoid calling setState() directly within an effect
+  36 |           setIsActive(false);
+  37 |           speak("Practice complete.");
+  38 |         } else {  react-hooks/set-state-in-effect
+
+C:\Users\T@LENT\OneDrive\Desktop\Shooters\src\components\PremiumFeatures.jsx
+  2:10  error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Users\T@LENT\OneDrive\Desktop\Shooters\src\components\ShootingFinal.jsx
+  1013:7  error  Parsing error: Unexpected token {
+
+C:\Users\T@LENT\OneDrive\Desktop\Shooters\src\components\TargetAnalysis.jsx
+  162:32  error  'i' is defined but never used  no-unused-vars
+
+C:\Users\T@LENT\OneDrive\Desktop\Shooters\src\components\Timeline.jsx
+   1:31  error  'useRef' is defined but never used. Allowed unused vars must match /^[A-Z_]/u                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        no-unused-vars
+   1:39  error  'useCallback' is defined but never used. Allowed unused vars must match /^[A-Z_]/u                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   no-unused-vars
+   4:10  error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        no-unused-vars
+  34:53  error  Error: Cannot call impure function during render
+
+`Math.random` is an impure function. Calling an impure function can produce unstable results that update unpredictably when the component happens to re-render. (https://react.dev/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent).
+
+  32 |   // Hour 4 state
+  33 |   const [journal, setJournal] = useState('');
+> 34 |   const [tip] = useState(CONFIDENCE_TIPS[Math.floor(Math.random() * CONFIDENCE_TIPS.length)]);
+     |                                                     ^^^^^^^^^^^^^ Cannot call impure function
+  35 |
+  36 |   // Reward state
+  37 |   const [rewardTip, setRewardTip] = useState('');  react-hooks/purity
+
+C:\Users\T@LENT\OneDrive\Desktop\Shooters\src\pages\Dashboard.jsx
+  13:10  error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  no-unused-vars
+  16:7   error  'shooter2' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       no-unused-vars
+  23:5   error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+  21 |
+  22 |   useEffect(() => {
+> 23 |     setStreak(getStreak());
+     |     ^^^^^^^^^ Avoid calling setState() directly within an effect
+  24 |   }, []);
+  25 |
+  26 |   const handleLogout = () => {  react-hooks/set-state-in-effect
+
+C:\Users\T@LENT\OneDrive\Desktop\Shooters\src\pages\Onboarding.jsx
+   4:10  error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 no-unused-vars
+  20:5   error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+  18 |
+  19 |   useEffect(() => {
+> 20 |     setQuote(MOTIVATIONS[Math.floor(Math.random() * MOTIVATIONS.length)]);
+     |     ^^^^^^^^ Avoid calling setState() directly within an effect
+  21 |   }, []);
+  22 |
+  23 |   const handleSubmit = (e) => {  react-hooks/set-state-in-effect
+
+Γ£û 24 problems (24 errors, 0 warnings)
+

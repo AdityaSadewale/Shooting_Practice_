@@ -1,4 +1,6 @@
-import { useState } from 'react';
+
+import { useState, useEffect } from 'react';
+
 import { CheckCircle2, ChevronDown, ChevronUp, Play, Square, Save, Gift, Music, Pause, SkipBack, SkipForward, Volume2, VolumeX, PauseCircle, PlayCircle } from 'lucide-react';
 import { saveSession } from '../lib/store';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -20,6 +22,14 @@ const REWARD_TIPS = [
   "Reward Tip: A good follow-through means seeing the pellet strike through the sights."
 ];
 
+const getRandomConfidenceTip = () => {
+  return CONFIDENCE_TIPS[Math.floor(Math.random() * CONFIDENCE_TIPS.length)];
+};
+
+const getRandomRewardTip = () => {
+  return REWARD_TIPS[Math.floor(Math.random() * REWARD_TIPS.length)];
+};
+
 export default function Timeline({ user, onSessionSaved }) {
   const [expandedHour, setExpandedHour] = useState(1);
   const [completedHours, setCompletedHours] = useState([]);
@@ -29,13 +39,32 @@ export default function Timeline({ user, onSessionSaved }) {
   
   // Hour 4 state
   const [journal, setJournal] = useState('');
+
   const [tip] = useState(() => CONFIDENCE_TIPS[Math.floor(Math.random() * CONFIDENCE_TIPS.length)]);
+
+  const [tip] = useState(getRandomConfidenceTip);
+
 
   // Reward state
   const [rewardTip, setRewardTip] = useState('');
 
   // Removed local Audio Context for Zen BGM since it is now global
 
+
+
+
+  useEffect(() => {
+    if (!timerActive || timeLeft <= 0) return;
+    const interval = setInterval(() => setTimeLeft(l => {
+      if (l <= 1) {
+        clearInterval(interval);
+        setTimerActive(false);
+        return 0;
+      }
+      return l - 1;
+    }), 1000);
+    return () => clearInterval(interval);
+  }, [timerActive, timeLeft]);
 
 
   const toggleHour = (hour) => {
@@ -67,7 +96,7 @@ export default function Timeline({ user, onSessionSaved }) {
       journal
     };
     saveSession(session);
-    const randomReward = REWARD_TIPS[Math.floor(Math.random() * REWARD_TIPS.length)];
+    const randomReward = getRandomRewardTip();
     setRewardTip(randomReward);
     if (onSessionSaved) onSessionSaved();
   };

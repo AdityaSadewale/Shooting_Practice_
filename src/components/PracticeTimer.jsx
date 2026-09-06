@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import { useState, useEffect, useCallback } from 'react';
+=======
+import { useState, useEffect } from 'react';
+>>>>>>> b434b554a09d0eedfdd080bbb1e4b51a1ae0e8e8
 import { Play, Square, Pause, RotateCcw } from 'lucide-react';
 
 
@@ -26,6 +30,7 @@ export default function PracticeTimer({
   }, []);
 
   useEffect(() => {
+<<<<<<< HEAD
     if (!isActive || timeLeft > 0) return;
 
     // Use a timeout to defer state updates and avoid cascading renders
@@ -58,6 +63,37 @@ export default function PracticeTimer({
     }
     return () => clearInterval(interval);
   }, [isActive, timeLeft]);
+=======
+    if (!isActive) return;
+
+    const interval = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          if (phase === 'active') {
+            speak(stopVocab);
+            if (cycle >= totalCycles) {
+              setPhase('done');
+              setIsActive(false);
+              speak("Practice complete.");
+              return 0;
+            } else {
+              setPhase('rest');
+              return restSeconds;
+            }
+          } else if (phase === 'rest') {
+            speak(startVocab);
+            setPhase('active');
+            setCycle(c => c + 1);
+            return activeSeconds;
+          }
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [isActive, phase, cycle, activeSeconds, restSeconds, totalCycles, startVocab, stopVocab]);
+>>>>>>> b434b554a09d0eedfdd080bbb1e4b51a1ae0e8e8
 
   const toggleTimer = () => {
     if (phase === 'done') return;
