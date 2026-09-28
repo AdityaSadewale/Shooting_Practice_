@@ -4,7 +4,6 @@ import { AnimatePresence, motion } from 'framer-motion';
 
 const getFlickDelay = () => 1000 + Math.random() * 2000;
 
-
 export default function InteractiveDrills() {
   const [drillMode, setDrillMode] = useState('hold'); // 'hold' or 'flick'
   const [isActive, setIsActive] = useState(false);
