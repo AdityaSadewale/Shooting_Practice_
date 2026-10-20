@@ -13,6 +13,7 @@ const MOODS = [
   { id: 'distracted', label: 'Unfocused', emoji: '🌀', color: 'from-amber-500 to-yellow-600', bg: 'bg-amber-500/10 border-amber-500/20 text-amber-500' }
 ];
 
+
 const generateEntryId = (existingId) => existingId || Date.now().toString();
 
 export default function Analytics() {
