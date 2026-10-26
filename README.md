@@ -10,6 +10,7 @@ A simple and interactive shooting practice application/game designed to improve 
 - 🎮 Simple and user-friendly interface
 - 🔁 Replay / restart functionality
 
+
 ---
 ## 🛠️ Tech Stack
 
