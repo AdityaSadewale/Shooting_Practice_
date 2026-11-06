@@ -5,6 +5,7 @@ import { Target, TrendingUp, BookOpen, Calendar, Smile, Trophy, Trash2, Edit2, P
 import { AnimatePresence, motion } from 'framer-motion';
 
 
+
 const MOODS = [
   { id: 'epic', label: 'Epic / On Fire', emoji: '🔥', color: 'from-orange-500 to-red-600', bg: 'bg-orange-500/10 border-orange-500/20 text-orange-500' },
   { id: 'calm', label: 'Calm & Flowing', emoji: '🧘', color: 'from-emerald-500 to-teal-600', bg: 'bg-emerald-500/10 border-emerald-500/20 text-emerald-500' },
