@@ -35,6 +35,7 @@ export default function Analytics() {
   const [focusArea, setFocusArea] = useState('');
   const [scoreInput, setScoreInput] = useState('');
   const [notes, setNotes] = useState('');
+
   
   const [isSuccess, setIsSuccess] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
