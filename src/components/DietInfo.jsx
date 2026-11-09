@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Apple, Check, X, Droplets, Calendar, Activity, Sunrise, Sun, Moon, Trophy, Target, Flame, Gift, Clock, AlertTriangle, ShieldCheck, Crosshair, Coffee, Heart, Crown, Star, Zap, Lock } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 
+
 const fifteenDayPlan = [
   {
     day: 1,
