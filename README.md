@@ -14,7 +14,6 @@ A simple and interactive shooting practice application/game designed to improve 
 ---
 ## 🛠️ Tech Stack
 
-
 - Language: (e.g., Python / JavaScript / C++ / etc.)
 - Framework: (if any — e.g., Pygame, Unity, React)
 - Tools: Git, VS Code
