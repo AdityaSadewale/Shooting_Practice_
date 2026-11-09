@@ -3,6 +3,7 @@ import { Apple, Check, X, Droplets, Calendar, Activity, Sunrise, Sun, Moon, Trop
 import { AnimatePresence, motion } from 'framer-motion';
 
 
+
 const fifteenDayPlan = [
   {
     day: 1,
